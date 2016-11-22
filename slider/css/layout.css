@@ -1,0 +1,26 @@
+.container{
+	width: 800px;
+	height: 450px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+.slider{ 
+	position: relative;
+	list-style: none;
+	padding: 0;
+}
+img{
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+.slider > *{ 
+	float: left;
+}
+
+.clearfix:after, .clearfix:before{
+	clear: both;
+	content: "";
+	display: table;
+}
