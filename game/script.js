@@ -13,10 +13,19 @@ var dy = 4;
 var WIDTH;
 var HEIGHT;
 var context;
+
+/**
+ * Rect properties 
+ */
 var rectX;
 var rectY;
 var rectWidth;
 var rectHeight;
+
+/**
+ * Circle properties 
+ */
+var radius = 10;
 
 var canvasMinX;
 var canvasMaxX;
@@ -61,14 +70,14 @@ function checkRectCollision() {
 	var topRectBound = rectY;
 	var bottomRectBound = rectY + rectHeight;
 	
-	if (x + dx > leftRectBound && x + dx < rightRectBound) 
-		if (y  > topRectBound && y  < bottomRectBound) {
+	if ((x + dx) + radius > leftRectBound && (x + dx) + radius < rightRectBound) 
+		if (y + radius  > topRectBound && y + radius < bottomRectBound) {
 			dx = -dx;
 			notifyAboutCollision();
 		}
 		
-	if (y + dy > topRectBound && y + dy < bottomRectBound) 
-		if (x  > leftRectBound && x  < rightRectBound) {
+	if ((y + dy) + radius > topRectBound && (y + dy) + radius < bottomRectBound) 
+		if ((x + radius) > leftRectBound && (x + radius) < rightRectBound) {
 			dy = -dy;
 			notifyAboutCollision();
 		}
@@ -80,7 +89,7 @@ function checkRectCollision() {
 function draw() {
 	
     clear();
-    drawCircle(x, y, 10);
+    drawCircle(x, y, radius);
     drawRect(rectX, rectY, rectWidth, rectHeight);
     checkEdgesCollision();
     checkRectCollision();
