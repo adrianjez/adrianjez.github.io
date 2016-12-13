@@ -7,11 +7,15 @@
 var x = 150;
 var y = 150;
 
-var dx = 2;
-var dy = 4;
+var dx = 6;
+var dy = 8;
+
+var keyIntervalX;
+var keyIntervalY;
 
 var WIDTH;
 var HEIGHT;
+var context;
 var context;
 
 /**
@@ -21,6 +25,9 @@ var rectX;
 var rectY;
 var rectWidth;
 var rectHeight;
+
+var snake;
+var snakeSize = 10;
 
 /**
  * Circle properties 
@@ -70,17 +77,24 @@ function checkRectCollision() {
 	var topRectBound = rectY;
 	var bottomRectBound = rectY + rectHeight;
 	
-	if ((x + dx) + radius > leftRectBound && (x + dx) + radius < rightRectBound) 
+	if ((x + dx) + radius > leftRectBound && (x + dx) - radius < rightRectBound) 
 		if (y + radius  > topRectBound && y + radius < bottomRectBound) {
 			dx = -dx;
-			notifyAboutCollision();
+			//notifyAboutCollision();
 		}
 		
-	if ((y + dy) + radius > topRectBound && (y + dy) + radius < bottomRectBound) 
+	if ((y + dy) + radius > topRectBound && (y + dy) - radius < bottomRectBound) 
 		if ((x + radius) > leftRectBound && (x + radius) < rightRectBound) {
 			dy = -dy;
-			notifyAboutCollision();
+			//notifyAboutCollision();
 		}
+}
+
+function drawSnakePart(x, y){
+	context.fillStyle = 'green';
+    context.fillRect(x*snakeSize, y*snakeSize, snakeSize, snakeSize);
+    context.strokeStyle = 'darkgreen';
+    context.strokeRect(x*snakeSize, y*snakeSize, snakeSize, snakeSize);
 }
 
 /** Function which is called in interval. 
@@ -90,9 +104,23 @@ function draw() {
 	
     clear();
     drawCircle(x, y, radius);
-    drawRect(rectX, rectY, rectWidth, rectHeight);
+	
+	var snakeHeadX = snake[0].x;
+    var snakeHeadY = snake[0].y;
+    
+    snakeHeadX += keyIntervalX;
+    snakeHeadY += keyIntervalY;
+    
+    drawRect(rectX , rectY, 
+		rectWidth, rectHeight);
+	
+	
     checkEdgesCollision();
-    checkRectCollision();
+    
+    for(var i = 0; i < snake.length; i++) {
+          drawSnakePart(snake[i].x, snake[i].y);
+    }
+    //checkRectCollision();
     /*
     else if (y + dy > HEIGHT) {
         if (x > rectX && x < rectX + rectWidth)
@@ -100,8 +128,8 @@ function draw() {
         else
             clearInterval(IntervalID);
     }*/
-    x += dx;
-    y += dy;
+    //x += dx;
+    //y += dy;
 }
 
 /** Callback for mouse event TODO later **/
@@ -117,22 +145,58 @@ function init_mysz() {
     canvasMaxX = canvasMinX + WIDTH;
 }
 
-function notifyAboutCollision(){
-	alert("Collision detected :");
-}
-window.onload = function () {
 
+function handleKeyboardKeys(event){
+	console.log(event);
+	keyCode = window.event.keyCode; 
+    keyCode = event.keyCode;
+
+	switch(keyCode) {
+		case 37:
+			keyIntervalX = -1;
+			break;
+		case 39:
+			keyIntervalX = 1;
+			break;
+        case 38:
+			keyIntervalY = -1;
+          break;
+        case 40:
+			keyIntervalY = 1;
+			break;
+	}
+	draw();
+	keyIntervalX = 0;
+	keyIntervalY = 0;
+}
+
+function init(){
+	snake = [];
+	for(var i = 0; i < 4; i++){
+		snake.push({x:i, y:0});
+	}
+}
+
+window.onload = function () {
+console.log("!");
 
     var canvas = document.getElementById('pong');
     context = canvas.getContext('2d');
     WIDTH = 600;
     HEIGHT = 600;
-    IntervalIDb = setInterval(draw, 20);
-    rectHeight = 400;
-    rectWidth = 100;
+    //IntervalIDb = setInterval(draw, 10);
+    rectHeight = 20;
+    rectWidth = 20;
     rectX = (WIDTH / 2) - (rectWidth/2);
     rectY = (HEIGHT / 2) - (rectHeight/2);
+    init();
+	draw();
+	
+    $( document ).keydown(handleKeyboardKeys)
+
+   // document.onKeydown = handleKeyboardKeys();
     //init_mysz();
     //$(document).mousemove(onMouseMove);
-
 };
+
+
