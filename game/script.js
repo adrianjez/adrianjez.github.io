@@ -10,8 +10,7 @@ var y = 150;
 var dx = 6;
 var dy = 8;
 
-var keyIntervalX;
-var keyIntervalY;
+var direction = 'right';
 
 var WIDTH;
 var HEIGHT;
@@ -104,22 +103,35 @@ function draw() {
 	
     clear();
     drawCircle(x, y, radius);
+	drawRect(rectX , rectY, rectWidth, rectHeight);
 	
 	var snakeHeadX = snake[0].x;
     var snakeHeadY = snake[0].y;
     
-    snakeHeadX += keyIntervalX;
-    snakeHeadY += keyIntervalY;
+    if (direction == 'right') snakeHeadX++; 
+	else if (direction == 'left') snakeHeadX--; 
+	else if (direction == 'up') snakeHeadY--; 
+	else if (direction == 'down') {
+		snakeHeadY++; 
+	}
+
+        
+	var tail = snake.pop();
+    tail.x = snakeHeadX; 
+    tail.y = snakeHeadY;
     
-    drawRect(rectX , rectY, 
-		rectWidth, rectHeight);
-	
-	
+    if (snakeHeadX == -1 || snakeHeadX == WIDTH/snakeSize || snakeHeadY == -1 
+		|| snakeHeadY == HEIGHT/snakeSize) {
+			clearInterval(IntervalIDb);
+	}
+      
+    snake.unshift(tail); 
     checkEdgesCollision();
     
     for(var i = 0; i < snake.length; i++) {
-          drawSnakePart(snake[i].x, snake[i].y);
+		drawSnakePart(snake[i].x, snake[i].y);
     }
+    
     //checkRectCollision();
     /*
     else if (y + dy > HEIGHT) {
@@ -128,8 +140,8 @@ function draw() {
         else
             clearInterval(IntervalID);
     }*/
-    //x += dx;
-    //y += dy;
+    x += (dx );
+    y += (dy );
 }
 
 /** Callback for mouse event TODO later **/
@@ -148,26 +160,22 @@ function init_mysz() {
 
 function handleKeyboardKeys(event){
 	console.log(event);
-	keyCode = window.event.keyCode; 
     keyCode = event.keyCode;
 
 	switch(keyCode) {
 		case 37:
-			keyIntervalX = -1;
+			direction = 'left';
 			break;
 		case 39:
-			keyIntervalX = 1;
+			direction = 'right';
 			break;
         case 38:
-			keyIntervalY = -1;
+			direction = 'up';
           break;
         case 40:
-			keyIntervalY = 1;
+			direction = 'down';
 			break;
 	}
-	draw();
-	keyIntervalX = 0;
-	keyIntervalY = 0;
 }
 
 function init(){
@@ -184,7 +192,7 @@ console.log("!");
     context = canvas.getContext('2d');
     WIDTH = 600;
     HEIGHT = 600;
-    //IntervalIDb = setInterval(draw, 10);
+    IntervalIDb = setInterval(draw, 100);
     rectHeight = 20;
     rectWidth = 20;
     rectX = (WIDTH / 2) - (rectWidth/2);
